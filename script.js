@@ -20,6 +20,7 @@ const translations = {
       panels: "عدد الألواح",
       inverter: "سعر الإنفرتر",
       batteries: "عدد البطاريات",
+      batteryCost: "مجموع سعر البطارية",
       install: "تكلفة التنصيب والضمان",
       total: "الكلفة الكلية"
     }
@@ -42,6 +43,7 @@ const translations = {
       panels: "Panels",
       inverter: "Inverter Price",
       batteries: "Batteries",
+      batteryCost: "Total cost of battery",
       install: "Installation",
       total: "Total Cost"
     }
@@ -64,6 +66,7 @@ const translations = {
       panels: "ژمارەی پەنێڵەکان",
       inverter: "نرخی ئینڤێرتەر",
       batteries: "باتریەکان",
+      batteryCost: "کۆی تێچووی پاتری",
       install: "تێچوی دامەزراندن",
       total: "کۆی گشتی"
     }
@@ -86,6 +89,7 @@ const translations = {
       panels: "Panel Sayısı",
       inverter: "İnvertör Fiyatı",
       batteries: "Bataryalar",
+      batteryCost: "Bataryalarin Toplam Fiyatı",
       install: "Kurulum Maliyeti",
       total: "Toplam Maliyet"
     }
@@ -176,6 +180,7 @@ function showResults(result) {
     <p>${t.panels}: ${result.panels}</p>
     <p>${t.inverter}: $${result.inverter}</p>
     ${result.batteries ? `<p>${t.batteries}: ${result.batteries}</p>` : ""}
+    ${result.batteryCost ? `<p>${t.batteryCost}: ${result.batteryCost}</p>` : ""}
     <p>${t.install}: $${result.install.toFixed(2)}</p>
     <p><strong>${t.total}: $${result.cost.toFixed(2)}</strong></p>
   `;
@@ -254,31 +259,15 @@ function calcHybrid(morningAmp, nightAmp, hours) {
   // Battery calculation
   const batteryCapacity = (nightAmp * 230 * hours) / 0.8;
   const batteries = Math.round(batteryCapacity / 10000);
-  const batteryCost = batteries * 1000;
+  const batteryCost = batteries * 1120;
+  //const batteryprice =batteries * 1120;
 
-  const install = (kw * 100) / 2;
+  const install = (kw * 100 * 1.15) / 2;
   const cost = ((68 + 23 + 30) * panels) + inverter + 600 + install + batteryCost;
 
-  return { kw, panels, inverter, batteries, batteryCapacity, install, cost };
+  return { kw, panels, inverter, batteries, batteryCapacity, batteryCost, install, cost };
 }
 
-// ================================
-// عرض النتائج
-// ================================
-function showResults(result) {
-  const lang = langSelect.value;
-  const t = translations[lang].results;
-
-  resultsDiv.innerHTML = `
-    <h3>${t.header}</h3>
-    <p>${t.size}: ${result.kw.toFixed(2)} kW</p>
-    <p>${t.panels}: ${result.panels}</p>
-    <p>${t.inverter}: $${result.inverter}</p>
-    ${result.batteries ? `<p>${t.batteries}: ${result.batteries}</p>` : ""}
-    <p>${t.install}: $${result.install.toFixed(2)}</p>
-    <p><strong>${t.total}: $${result.cost.toFixed(2)}</strong></p>
-  `;
-}
 
 // ================================
 // زر الحساب
